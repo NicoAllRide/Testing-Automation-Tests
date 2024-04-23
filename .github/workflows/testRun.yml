@@ -34,9 +34,9 @@ jobs:
 
       - name: Commit Log File
         run: |
-          cd /home/runner/work/RF-Automation-Test/RF-Automation-Test
-          git config --global user.email nico2795@gmail.com
-          git config --global user.name Nico2795
+          cd /home/runner/work/Testing-Automation-Tests/Testing-Automation-Tests
+          git config --global user.email nicolas@allrideapp.com
+          git config --global user.name NicoAllRide
           git add log.html
           git commit -m "Add log file"
           git push origin main
