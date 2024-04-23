@@ -1,1 +1,56 @@
 
+name: Run Robot Framework Tests and Send Email
+
+on:
+  repository_dispatch:
+    types: [trigger-workflow]
+
+jobs:
+  run_tests_and_send_email:
+    name: Run Robot Framework Tests and Send Email
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python and pip
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          pip-version: latest
+
+      - name: Install dependencies
+        run: |
+          pip install robotframework
+          pip install robotframework-requests
+          pip install robotframework-seleniumlibrary
+          pip install rpaframework
+
+      - name: Run Robot Framework tests
+        run: |
+          robot AllRide\ Test\ Cases/Test\ Cases
+        continue-on-error: true
+
+      - name: Commit Log File
+        run: |
+          cd /home/runner/work/RF-Automation-Test/RF-Automation-Test
+          git config --global user.email nico2795@gmail.com
+          git config --global user.name Nico2795
+          git add log.html
+          git commit -m "Add log file"
+          git push origin main
+        working-directory: ${{ github.workspace }}
+
+      - name: Send Email with Log File
+        uses: licenseware/send-email-notification@v1
+        with:
+          api-key: ${{ secrets.SENDGRID_API_KEY }}
+          subject: Test Subject
+          from-email: nicolas@allrideapp.com
+          to-email: constanza@allrideapp.com
+          markdown-body: |
+                Reporte de pruebas automatizadas "TESTING"
+                Para visualizar, descargar el archivo log.html y abrirlo en cualquier navegador
+          attachments: log.html
+          attachments-disposition: attachment
