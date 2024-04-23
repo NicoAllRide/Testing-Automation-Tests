@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.1.1 (Python 3.10.12 on win32)" generated="20240404 12:02:27.078" rpa="false" schemaversion="4">
+<suite id="s1" name="Robot Interactive Console" source="c:\Users\nico2\.vscode\extensions\robocorp.robotframework-lsp-1.11.0\src\robotframework_ls\vendored\robotframework_interactive\robot_interactive_console.robot">
+<test id="s1-t1" name="Default Task/Test" line="5">
+<kw name="Interpreter Main Loop" library="MainLoop">
+<kw name="Open Application">
+<arg>http://127.0.0.1:4723</arg>
+<arg>appium:automationName=UiAutomator2</arg>
+<arg>appium:platformName=Android</arg>
+<arg>appium:newCommandTimeout=${3600}</arg>
+<arg>appium:connectHardwareKeyboard=${True}</arg>
+<msg timestamp="20240404 12:02:27.847" level="FAIL">No keyword with name 'Open Application' found.</msg>
+<status status="FAIL" starttime="20240404 12:02:27.847" endtime="20240404 12:02:27.848"/>
+</kw>
+<kw name="Activate Application">
+<arg>com.allride.buses</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.849" endtime="20240404 12:02:27.849"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el1}</var>
+<arg>xpath=//android.widget.TextView[@resource-id="com.allride.buses:id/navigation_bar_item_small_label_view" and @text="Regulares"]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.849" endtime="20240404 12:02:27.849"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el1}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.851" endtime="20240404 12:02:27.851"/>
+</kw>
+<kw name="Click Element">
+<arg>${el1}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.853" endtime="20240404 12:02:27.853"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el2}</var>
+<arg>xpath=(//android.widget.Button[@resource-id="com.allride.buses:id/startButton"])[3]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.853" endtime="20240404 12:02:27.853"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el2}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.855" endtime="20240404 12:02:27.855"/>
+</kw>
+<kw name="Click Element">
+<arg>${el2}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.857" endtime="20240404 12:02:27.857"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el3}</var>
+<arg>id=com.allride.buses:id/buttonSecondary</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.857" endtime="20240404 12:02:27.857"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el3}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.859" endtime="20240404 12:02:27.859"/>
+</kw>
+<kw name="Click Element">
+<arg>${el3}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.861" endtime="20240404 12:02:27.861"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el4}</var>
+<arg>id=com.allride.buses:id/lastUsedVehicleText</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.862" endtime="20240404 12:02:27.862"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el4}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.864" endtime="20240404 12:02:27.864"/>
+</kw>
+<kw name="Click Element">
+<arg>${el4}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.867" endtime="20240404 12:02:27.867"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el5}</var>
+<arg>id=com.allride.buses:id/startButton</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.867" endtime="20240404 12:02:27.867"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el5}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.869" endtime="20240404 12:02:27.869"/>
+</kw>
+<kw name="Click Element">
+<arg>${el5}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.871" endtime="20240404 12:02:27.871"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el7}</var>
+<arg>xpath=//android.widget.TextView[@text="VALIDAR"]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.872" endtime="20240404 12:02:27.872"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el7}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.874" endtime="20240404 12:02:27.874"/>
+</kw>
+<kw name="Click Element">
+<arg>${el7}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.876" endtime="20240404 12:02:27.877"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>20s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.877" endtime="20240404 12:02:27.877"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el8}</var>
+<arg>accessibility_id=Atrás</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.877" endtime="20240404 12:02:27.877"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el8}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.879" endtime="20240404 12:02:27.879"/>
+</kw>
+<kw name="Click Element">
+<arg>${el8}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.881" endtime="20240404 12:02:27.881"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.881" endtime="20240404 12:02:27.881"/>
+</kw>
+<kw name="Execute Script">
+<arg>mobile: openNotifications</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.883" endtime="20240404 12:02:27.883"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el12}</var>
+<arg>xpath=//android.widget.TextView[@resource-id="com.android.systemui:id/tile_label" and @text="Modo de avión"]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.883" endtime="20240404 12:02:27.883"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el12}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.885" endtime="20240404 12:02:27.885"/>
+</kw>
+<kw name="Click Element">
+<arg>${el12}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.887" endtime="20240404 12:02:27.887"/>
+</kw>
+<kw name="Swipe">
+<arg>${722}</arg>
+<arg>${2236}</arg>
+<arg>${764}</arg>
+<arg>${686}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.888" endtime="20240404 12:02:27.888"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.888" endtime="20240404 12:02:27.888"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el9}</var>
+<arg>id=com.allride.buses:id/stopTripButton</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.888" endtime="20240404 12:02:27.888"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el9}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.890" endtime="20240404 12:02:27.890"/>
+</kw>
+<kw name="Click Element">
+<arg>${el9}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.891" endtime="20240404 12:02:27.891"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el10}</var>
+<arg>id=com.allride.buses:id/titleButtonMain</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.891" endtime="20240404 12:02:27.891"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el10}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.893" endtime="20240404 12:02:27.893"/>
+</kw>
+<kw name="Click Element">
+<arg>${el10}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.895" endtime="20240404 12:02:27.895"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el11}</var>
+<arg>id=android:id/button1</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.895" endtime="20240404 12:02:27.895"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el11}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.896" endtime="20240404 12:02:27.897"/>
+</kw>
+<kw name="Click Element">
+<arg>${el11}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.898" endtime="20240404 12:02:27.898"/>
+</kw>
+<kw name="Execute Script">
+<arg>mobile: openNotifications</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.900" endtime="20240404 12:02:27.901"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${el6}</var>
+<arg>xpath=//android.widget.TextView[@resource-id="com.android.systemui:id/tile_label" and @text="Modo de avión"]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.901" endtime="20240404 12:02:27.901"/>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arg>${el6}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.902" endtime="20240404 12:02:27.902"/>
+</kw>
+<kw name="Click Element">
+<arg>${el6}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.904" endtime="20240404 12:02:27.904"/>
+</kw>
+<kw name="Swipe">
+<arg>${775}</arg>
+<arg>${2230}</arg>
+<arg>${867}</arg>
+<arg>${195}</arg>
+<status status="NOT RUN" starttime="20240404 12:02:27.905" endtime="20240404 12:02:27.905"/>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<arg>10s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" starttime="20240404 12:02:27.905" endtime="20240404 12:02:27.905"/>
+</kw>
+<status status="PASS" starttime="20240404 12:02:27.204" endtime="20240404 12:02:29.804"/>
+</kw>
+<status status="PASS" starttime="20240404 12:02:27.204" endtime="20240404 12:02:29.804"/>
+</test>
+<status status="PASS" starttime="20240404 12:02:27.081" endtime="20240404 12:02:29.805"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Robot Interactive Console">Robot Interactive Console</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

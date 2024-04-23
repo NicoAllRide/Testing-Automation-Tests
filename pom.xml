@@ -1,0 +1,6 @@
+<dependency>
+    <groupId>io.appium</groupId>
+    <artifactId>java-client</artifactId>
+    <version>${version.you.require}</version>
+    <scope>test</scope>
+  </dependency>

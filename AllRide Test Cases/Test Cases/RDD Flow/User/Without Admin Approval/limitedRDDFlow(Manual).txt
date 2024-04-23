@@ -1,0 +1,15 @@
+Debe ser manual, ya que desde el endpoint, se puede seleccionar cualquier parada sea o no sea limitada.
+A revisar:
+
+Verificar que en la comunidad esté habilitada la opción "Permitir que usuarios soliciten servicios de forma limitada"
+El usuario debe tener habilitada la creación de rutas RDD
+Deben haber paradas configuradas para RDD limitada, esto quiere decir que deben contar con la configuracion correcta, como el dia y la hora del servicio.
+En la app, al momento de solicitar una ruta rdd debiese permitir la continuación del flujo solo con las paradas que cuentan con la configuracion de limitada
+Para crear una parada que pueda configurarse el día y la hora, esta parada debe tener un placeId, es decir, debe haberse creado en lugares de la comunidad.
+hay dos tipos de salidas limitadas, las que tienen configuración y las que no. Ambas se ven con un asterisco rojo, y son solo las que tienen asterisco rojo las que se pueden modificar por fecha y hora. Ahora, ambos lugares, configurados o no, deberían poder permitir la solicitud de RDD. Las que no tienen configuracion, para cualquier dia y hora, las que si tienen la configuracion solo para el dia y la hora configurada. --> aquí hay más casos porque hay configuraciones nuevas, una es la agrupación, que puede ser por parámetro o por lista de categorías, esto significa que agrupa en la salida acumuladora según un parámetro en específico o seg+un los grupos que definas, y está la restricción de paradero de usuario, que significa que el usuario sólo podrá solicitar a través de la app si se cumple que el origen/destino es la parada de rdd limitada y el destino/origen es la parada asociada al usuario
+Al momento de pedir la solicitud de rdd desde el usuario para cualquier lugar, que no tenga el asterisco rojo, ya sea una parada dentro de la comunidad o puesta por el usuario, no debería dejarla
+
+Para automatizar podría ser: 
+* Verificar que hay salidas configuradas para rdd limitada
+* Activar las configuraciones de agrupacion
+* Verificar que la salida agrupa correctamente dependiendo de los parametros

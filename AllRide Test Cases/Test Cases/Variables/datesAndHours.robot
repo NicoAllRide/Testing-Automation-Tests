@@ -1,0 +1,20 @@
+*** Variables ***
+${arrival_date}
+${r_estimated_arrival1}
+${service_date}
+${modified_arrival_date}
+${r_modified_estimated_arrival}
+${modified_service_date}
+${service_date_20min}
+${service_date_22min}
+${start_date}
+${end_date_4weeks}
+${end_date}
+${end_date_tomorrow}
+${schedule_day}
+${start_date_today}
+${today_date}
+${end_date_tomorrow2}
+${expiration_date_qr}
+${today_historic_movement}
+${tomorrow_historic_movement}
