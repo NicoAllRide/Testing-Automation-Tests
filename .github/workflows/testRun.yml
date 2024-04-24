@@ -38,7 +38,8 @@ jobs:
           git config --global user.email nicolas@allrideapp.com
           git config --global user.name NicoAllRide
           git add log.html
-          git commit -m "Add log file"
+          git add output.xml
+          git commit -m "Add log file and Output"
           git push origin main
         working-directory: ${{ github.workspace }}
 
@@ -54,3 +55,7 @@ jobs:
                 Para visualizar, descargar el archivo log.html y abrirlo en cualquier navegador
           attachments: log.html
           attachments-disposition: attachment
+
+      - name: Run sendTestToSlack.py
+        run: python sendTestToSlack.py
+
