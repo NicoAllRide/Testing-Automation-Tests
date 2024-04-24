@@ -30,6 +30,7 @@ jobs:
       - name: Run Robot Framework tests
         run: |
           robot AllRide\ Test\ Cases/Test\ Cases
+          AllRide\ Test\ Cases/Test\ Cases/RDD\ Flow/User/Without\ Admin\ Approval/noJoinServices.robot
         continue-on-error: true
 
       - name: Commit Log File
