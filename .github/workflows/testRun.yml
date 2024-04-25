@@ -20,43 +20,6 @@ jobs:
           python-version: 3.8
           pip-version: latest
 
-      - name: Install dependencies
-        run: |
-          pip install robotframework
-          pip install robotframework-requests
-          pip install robotframework-seleniumlibrary
-          pip install rpaframework
-
-      - name: Run Robot Framework tests
-        run: |
-          robot AllRide\ Test\ Cases/Test\ Cases
-          AllRide\ Test\ Cases/Test\ Cases/RDD\ Flow/User/Without\ Admin\ Approval/noJoinServices.robot
-        continue-on-error: true
-
-      - name: Commit Log File
-        run: |
-          cd /home/runner/work/Testing-Automation-Tests/Testing-Automation-Tests
-          git config --global user.email nicolas@allrideapp.com
-          git config --global user.name NicoAllRide
-          git add log.html
-          git add output.xml
-          git commit -m "Add log file and Output"
-          git push origin main
-        working-directory: ${{ github.workspace }}
-
-      - name: Send Email with Log File
-        uses: licenseware/send-email-notification@v1
-        with:
-          api-key: ${{ secrets.SENDGRID_API_KEY }}
-          subject: Test Subject
-          from-email: nicolas@allrideapp.com
-          to-email: constanza@allrideapp.com
-          markdown-body: |
-                Reporte de pruebas automatizadas "TESTING"
-                Para visualizar, descargar el archivo log.html y abrirlo en cualquier navegador
-          attachments: log.html
-          attachments-disposition: attachment
-
       - name: Run sendTestToSlack.py
         run: python sendTestToSlack.py
         env:
