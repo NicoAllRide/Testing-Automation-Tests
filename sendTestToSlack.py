@@ -53,7 +53,7 @@ if __name__ == '__main__':
     }
     
     # URL del webhook de Slack
-    webhook_url = 'https://hooks.slack.com/services/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'
+    webhook_url = os.environ.get('SLACK_WEBHOOK')
     
     # Enviar el mensaje a Slack
     response = requests.post(webhook_url, data=json.dumps(message), headers={'Content-Type': 'application/json'})
