@@ -20,6 +20,14 @@ jobs:
           python-version: 3.8
           pip-version: latest
 
+      - name: Install dependencies
+        run: |
+          pip install robotframework
+          pip install robotframework-requests
+          pip install robotframework-seleniumlibrary
+          pip install rpaframework
+          pip install requests
+
       - name: Run sendTestToSlack.py
         run: python sendTestToSlack.py
         env:
