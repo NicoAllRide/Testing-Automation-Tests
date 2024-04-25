@@ -1,5 +1,6 @@
 import sys
 import json
+import os
 import requests
 from robot.api import ExecutionResult
 from robot.result.visitor import ResultVisitor
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     }
     
     # URL del webhook de Slack
-    webhook_url = os.environ.get('SLACK_WEBHOOK')
+    webhook_url = os.environ['SLACK_WEBHOOK']
     
     # Enviar el mensaje a Slack
     response = requests.post(webhook_url, data=json.dumps(message), headers={'Content-Type': 'application/json'})
