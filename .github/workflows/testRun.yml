@@ -5,6 +5,9 @@ on:
   repository_dispatch:
     types: [trigger-workflow]
 
+env:
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
 jobs:
   run_tests_and_send_email:
     name: Run Robot Framework Tests and Send Email
@@ -30,6 +33,4 @@ jobs:
 
       - name: Run sendTestToSlack.py
         run: python sendTestToSlack.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
