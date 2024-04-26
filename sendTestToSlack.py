@@ -51,7 +51,7 @@ if __name__ == '__main__':
     }
 
     # Inicializar el cliente de la API web de Slack con tu token de autenticación
-    client = WebClient(token='SLACK_TOKEN')
+    client = WebClient(token=SLACK_TOKEN)
 
     try:
         # Enviar el mensaje a Slack
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 logging.basicConfig(level=logging.DEBUG)
 
 # Inicializar el cliente de la API web de Slack con tu token de autenticación
-client = WebClient(token='SLACK_TOKEN')
+client = WebClient(token=SLACK_TOKEN)
 
 # Probar si el token es válido
 auth_test = client.auth_test()
