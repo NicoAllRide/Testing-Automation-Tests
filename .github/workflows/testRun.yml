@@ -30,6 +30,7 @@ jobs:
           pip install robotframework-seleniumlibrary
           pip install rpaframework
           pip install requests
+          pip install slack_sdk
 
       - name: Run sendTestToSlack.py
         run: python sendTestToSlack.py
