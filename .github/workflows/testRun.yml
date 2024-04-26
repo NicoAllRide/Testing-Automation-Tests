@@ -6,7 +6,7 @@ on:
     types: [trigger-workflow]
 
 env:
-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
 
 jobs:
   run_tests_and_send_email:
