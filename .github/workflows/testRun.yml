@@ -32,6 +32,23 @@ jobs:
           pip install requests
           pip install slack_sdk
 
+      - name: Run Robot Framework tests
+        run: |
+          robot AllRide\ Test\ Cases/Test\ Cases
+        continue-on-error: true
+
+      - name: Commit Log File
+        run: |
+          cd /home/runner/work/Testing-Automation-Tests/Testing-Automation-Tests
+          git config --global user.email nicolas@allrideapp.com
+          git config --global user.name NicoAllRide
+          git add log.html
+          git add output.xml
+          git commit -m "Add log file and Output"
+          git push origin main
+        working-directory: ${{ github.workspace }}
+
+
       - name: Run sendTestToSlack.py
         run: python sendTestToSlack.py
 
