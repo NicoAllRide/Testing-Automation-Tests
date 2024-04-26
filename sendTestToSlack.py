@@ -9,6 +9,8 @@ from robot.result.visitor import ResultVisitor
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+SLACK_TOKEN = os.environ["SLACK_TOKEN"]
+
 # Configurar el nivel de depuración del registro
 logging.basicConfig(level=logging.DEBUG)
 
