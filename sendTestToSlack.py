@@ -1,10 +1,18 @@
+
+import logging
 import sys
-import json
 import os
+import json
 import requests
 from robot.api import ExecutionResult
 from robot.result.visitor import ResultVisitor
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
+# Configurar el nivel de depuración del registro
+logging.basicConfig(level=logging.DEBUG)
+
+# Definir la clase para analizar los resultados de las pruebas
 class TestResultAnalyzer(ResultVisitor):
     def __init__(self):
         self.passed_tests = 0
@@ -35,32 +43,66 @@ if __name__ == '__main__':
     else:
         passed_percentage = 0
         
-    print(f"Total Tests: {total_tests}")
-    print(f"Passed Tests: {analyzer.passed_tests}")
-    print(f"Failed Tests: {analyzer.failed_tests}")
-    print(f"Passed Percentage: {passed_percentage:.2f}%")
-    
-    print("\nFailed Test Cases:")
-    for test_info in analyzer.failed_test_info:
-        print("Test Name:")
-        print(test_info['Test Name'])
-        print("\nError Message:")
-        print(test_info['Error Message'])
-        print("\n" + "-" * 50)
-        
     # Construir el mensaje a enviar a Slack
     message = {
-        "text": f"Resultado de las pruebas:\nTotal Tests: {total_tests}\nPassed Tests: {analyzer.passed_tests}\nFailed Tests: {analyzer.failed_tests}\nPassed Percentage: {passed_percentage:.2f}%\n\nFailed Test Cases:\n" + "\n".join([f"Test Name:\n{test_info['Test Name']}\n\nError Message:\n{test_info['Error Message']}\n\n{'-' * 50}\n" for test_info in analyzer.failed_test_info])
+       "text": f"Resultado de las pruebas:\nTotal Tests: {total_tests}\nPassed Tests: {analyzer.passed_tests}\nFailed Tests: {analyzer.failed_tests}\nPassed Percentage: {passed_percentage:.2f}%"
     }
+
+    # Inicializar el cliente de la API web de Slack con tu token de autenticación
+    client = WebClient(token='SLACK_TOKEN')
+
+    try:
+        # Enviar el mensaje a Slack
+        response = client.chat_postMessage(
+            channel="C070FNX0CHG",  # Reemplaza esto con el ID de tu canal
+            text=message["text"]
+        )
+
+        # Verificar si la solicitud fue exitosa
+        if response["ok"]:
+            print("Mensaje enviado a Slack exitosamente.")
+        else:
+            print(f"Error al enviar el mensaje a Slack: {response['error']}")
+
+    except SlackApiError as e:
+        print(f"Error al enviar el mensaje a Slack: {e.response['error']}")
+
+    # Guardar el detalle en un archivo
+    with open("detalle_pruebas.txt", "w") as file:
+        file.write("Failed Test Cases:\n")
+        for test_info in analyzer.failed_test_info:
+            file.write(f"Test Name: {test_info['Test Name']}\n")
+            file.write(f"Error Message: {test_info['Error Message']}\n")
+            file.write("-" * 50 + "\n")
     
-    # URL del webhook de Slack
-    webhook_url = os.environ['SLACK_WEBHOOK']
-    
-    # Enviar el mensaje a Slack
-    response = requests.post(webhook_url, data=json.dumps(message), headers={'Content-Type': 'application/json'})
-    
-    # Verificar si la solicitud fue exitosa
-    if response.status_code == 200:
-        print("Mensaje enviado a Slack exitosamente.")
-    else:
-        print("Error al enviar el mensaje a Slack.")
+    print("Detalle de las pruebas guardado en 'detalle_pruebas.txt'.")
+
+
+# Configurar el nivel de depuración del registro
+logging.basicConfig(level=logging.DEBUG)
+
+# Inicializar el cliente de la API web de Slack con tu token de autenticación
+client = WebClient(token='SLACK_TOKEN')
+
+# Probar si el token es válido
+auth_test = client.auth_test()
+bot_user_id = auth_test["user_id"]
+print(f"ID de usuario del bot: {bot_user_id}")
+
+# Leer el contenido del archivo
+with open("detalle_pruebas.txt", "r") as file:
+    file_content = file.read()
+
+# Subir un archivo con el contenido leído del archivo
+new_file = client.files_upload_v2(
+    title="detalle_pruebas",
+    filename="detalle_pruebas.txt",
+    content=file_content,  # Pasar el contenido del archivo aquí
+)
+
+# Compartir el archivo en un canal
+file_url = new_file.get("file").get("permalink")
+new_message = client.chat_postMessage(
+    channel="C070FNX0CHG",  # Reemplaza esto con el ID de tu canal
+    text=f"Detalle de pruebas fallidas: {file_url}",
+)
