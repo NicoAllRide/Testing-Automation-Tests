@@ -44,10 +44,13 @@ if __name__ == '__main__':
         passed_percentage = (analyzer.passed_tests / total_tests) * 100
     else:
         passed_percentage = 0
+
+    # Obtener el SHA del commit que desencadenó el workflow
+    sha = os.getenv("GITHUB_SHA")
         
     # Construir el mensaje a enviar a Slack
     message = {
-       "text": f"Resultado de las pruebas:\nTotal Tests: {total_tests}\nPassed Tests: {analyzer.passed_tests}\nFailed Tests: {analyzer.failed_tests}\nPassed Percentage: {passed_percentage:.2f}%"
+       "text": f"Resultado de las pruebas:\nTotal Tests: {total_tests}\nPassed Tests: {analyzer.passed_tests}\nFailed Tests: {analyzer.failed_tests}\nPassed Percentage: {passed_percentage:.2f}%\nSHA: {sha}"
     }
 
     # Inicializar el cliente de la API web de Slack con tu token de autenticación
