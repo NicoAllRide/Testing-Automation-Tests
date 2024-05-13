@@ -48,6 +48,14 @@ jobs:
           git push origin main
         working-directory: ${{ github.workspace }}
 
+      - name: Get Commit SHA
+        id: get_sha
+        run: echo "::set-output name=sha::${{ github.sha }}"
+
+      - name: Send SHA to Slack
+        run: |
+          echo "SHA from trigger repo: ${{ steps.get_sha.outputs.sha }}"
+          # You can use this value in your sendTestToSlack.py script
 
       - name: Run sendTestToSlack.py
         run: python sendTestToSlack.py
