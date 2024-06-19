@@ -1,4 +1,4 @@
-name: Android emulator
+name: Android emulatoras
 
 on:
   push:
