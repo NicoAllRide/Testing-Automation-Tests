@@ -32,6 +32,9 @@ jobs:
         npm install -g appium
         appium -v
 
+    - name: Give Gradlew Permission
+      run: chmod +x ./gradlew
+
     - name: Download dependencies
       run: ./gradlew build --stacktrace
 
