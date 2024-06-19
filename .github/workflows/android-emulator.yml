@@ -38,17 +38,20 @@ jobs:
     - name: Download dependencies
       run: ./gradlew build --stacktrace
 
-    - name: Set JAVA_HOME
-      run: echo "JAVA_HOME=$JAVA_HOME_11_0_23_X64" >> $GITHUB_ENV
-
-    - name: Start Android Emulator
-      uses: vgaidarji/android-github-actions-emulator@v1.0.1
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
       with:
         api-level: 30
-        target: default
-        arch: x86_64
-        profile: Nexus 6
-        script: ./gradlew connectedCheck
+        build-tools: '30.0.3'
+
+    - name: Create Emulator
+      run: |
+        avdmanager create avd -n test -k "system-images;android-30;default;x86_64" --force
+        $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window &
+        adb wait-for-device
+        adb shell settings put global window_animation_scale 0
+        adb shell settings put global transition_animation_scale 0
+        adb shell settings put global animator_duration_scale 0
 
     - name: Start Appium Server
       run: appium &
