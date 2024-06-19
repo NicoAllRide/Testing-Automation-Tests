@@ -51,13 +51,19 @@ jobs:
 
     - name: Start Emulator
       run: |
-        $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -no-accel -no-snapshot -no-boot-anim -no-skin -skip-adb-auth &
+        $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -no-accel -no-snapshot -no-boot-anim -skip-adb-auth &
         boot_completed=false
-        until [ "$boot_completed" == "1" ]; do
+        timeout=0
+        until [ "$boot_completed" == "1" ] || [ $timeout -eq 120 ]; do
           sleep 5
           boot_completed=$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
-          echo "Waiting for emulator to boot..."
+          echo "Waiting for emulator to boot... ($timeout seconds elapsed)"
+          timeout=$((timeout+5))
         done
+        if [ "$boot_completed" != "1" ]; then
+          echo "Emulator failed to boot within the timeout period"
+          exit 1
+        fi
         echo "Emulator booted!"
         adb -s emulator-5554 shell settings put global window_animation_scale 0
         adb -s emulator-5554 shell settings put global transition_animation_scale 0
