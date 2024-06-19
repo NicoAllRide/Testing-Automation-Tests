@@ -52,20 +52,16 @@ jobs:
     - name: Start Emulator
       run: |
         $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -no-accel -no-snapshot -no-boot-anim -no-skin -skip-adb-auth &
-        adb wait-for-device
-        adb shell settings put global window_animation_scale 0
-        adb shell settings put global transition_animation_scale 0
-        adb shell settings put global animator_duration_scale 0
-
-    - name: Wait for Emulator to Finish Booting
-      run: |
         boot_completed=false
         until [ "$boot_completed" == "1" ]; do
           sleep 5
-          boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+          boot_completed=$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
           echo "Waiting for emulator to boot..."
         done
         echo "Emulator booted!"
+        adb -s emulator-5554 shell settings put global window_animation_scale 0
+        adb -s emulator-5554 shell settings put global transition_animation_scale 0
+        adb -s emulator-5554 shell settings put global animator_duration_scale 0
 
     - name: Start Appium Server
       run: appium &
