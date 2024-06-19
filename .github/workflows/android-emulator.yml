@@ -32,22 +32,27 @@ jobs:
         npm install -g appium
         appium -v
 
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 30
+        build-tools: 30.0.3
+
     - name: Give Gradlew Permission
       run: chmod +x ./gradlew
 
     - name: Download dependencies
       run: ./gradlew build --stacktrace
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v2
-      with:
-        api-level: 30
-        build-tools: '30.0.3'
+    - name: Install system image
+      run: sdkmanager "system-images;android-30;default;x86_64"
 
-    - name: Create Emulator
+    - name: Create AVD
+      run: echo "no" | avdmanager create avd -n test -k "system-images;android-30;default;x86_64" --force
+
+    - name: Start Emulator
       run: |
-        avdmanager create avd -n test -k "system-images;android-30;default;x86_64" --force
-        $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window &
+        $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect &
         adb wait-for-device
         adb shell settings put global window_animation_scale 0
         adb shell settings put global transition_animation_scale 0
