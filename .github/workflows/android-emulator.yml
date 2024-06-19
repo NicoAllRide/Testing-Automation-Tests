@@ -40,12 +40,7 @@ jobs:
 
     - name: Start Android Emulator
       uses: vgaidarji/android-github-actions-emulator@v1.0.1
-      with:
-        api-level: 30
-        target: default
-        arch: x86_64
-        profile: Nexus 6
-        script: ./gradlew connectedCheck
+
 
     - name: Start Appium Server
       run: appium &
