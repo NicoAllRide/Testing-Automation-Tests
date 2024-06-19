@@ -49,4 +49,4 @@ jobs:
       run: appium &
 
     - name: Run Robot Framework Tests
-      run: robot path/to/your/tests
+      run: robot "test.robot"
