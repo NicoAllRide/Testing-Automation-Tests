@@ -38,9 +38,17 @@ jobs:
     - name: Download dependencies
       run: ./gradlew build --stacktrace
 
+    - name: Set JAVA_HOME
+      run: echo "JAVA_HOME=$JAVA_HOME_11_0_23_X64" >> $GITHUB_ENV
+
     - name: Start Android Emulator
       uses: vgaidarji/android-github-actions-emulator@v1.0.1
-
+      with:
+        api-level: 30
+        target: default
+        arch: x86_64
+        profile: Nexus 6
+        script: ./gradlew connectedCheck
 
     - name: Start Appium Server
       run: appium &
