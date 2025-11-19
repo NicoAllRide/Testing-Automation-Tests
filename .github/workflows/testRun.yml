@@ -1,46 +1,148 @@
-
 name: Run Robot Framework Tests and Send Email
 
 on:
   repository_dispatch:
     types: [trigger-workflow]
+  workflow_dispatch:  # Permite la ejecución manual
+
+concurrency:
+  group: regression-tests-stage-concurrency-group
+  cancel-in-progress: true
 
 env:
   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+  TOKEN_ADMIN: ${{ secrets.TOKEN_ADMIN }}
+  TOKEN_NICO: ${{ secrets.TOKEN_NICO }}
+  TOKEN_PEDRO: ${{ secrets.TOKEN_PEDRO }}
+  TOKEN_KRATOS: ${{ secrets.TOKEN_KRATOS }}
+  TOKEN_NARUTO: ${{ secrets.TOKEN_NARUTO }}
+  TZ: America/Santiago
 
 jobs:
-  run_tests_and_send_email:
-    name: Run Robot Framework Tests and Send Email
+  # ---------- Admin ----------
+  # admin:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup Python and pip
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.8
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk
+  #     - name: Run Admin tests
+  #       run: robot -d results -o output_admin.xml "AllRide Test Cases/Test Cases/Admin"
+  #       continue-on-error: true
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: output_admin
+  #         path: results/output_admin.xml
+
+  # ---------- RDD ----------
+  # rdd:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup Python and pip
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.8
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk
+  #     - name: Run RDD tests
+  #       run: robot -d results -o output_rdd.xml "AllRide Test Cases/Test Cases/RDD Flow"
+  #       continue-on-error: true
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: output_rdd
+  #         path: results/output_rdd.xml
+  # ---------- Carpool ----------
+  carpool:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
       - name: Setup Python and pip
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-          pip-version: latest
-
       - name: Install dependencies
         run: |
-          pip install robotframework
-          pip install robotframework-requests
-          pip install robotframework-seleniumlibrary
-          pip install rpaframework
-          pip install requests
-          pip install slack_sdk
+          pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk websocket-client
+      - name: Run Carpool tests
+        run: robot -d results -o output_carpool.xml "AllRide Test Cases/Test Cases/Carpool"
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: output_carpool
+          path: results/output_carpool.xml
 
-      - name: Get Commit SHA
-        id: get_sha
-        run: echo "::set-output name=sha::${{ github.sha }}"
+  # ---------- Regular + Scheduled (secuenciales) ----------
+  # regular_and_scheduled:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup Python and pip
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.8
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk
 
-      - name: Send SHA to Slack
-        run: |
-          echo "SHA from trigger repo: ${{ steps.get_sha.outputs.sha }}"
-          # You can use this value in your sendTestToSlack.py script
+  #     - name: Run Regular tests
+  #       run: robot -d results -o output_regular.xml "AllRide Test Cases/Test Cases/Regular Flow"
+  #       continue-on-error: true
 
-      - name: Run sendTestToSlack.py
-        run: python sendTestToSlack.py
+  #     - name: Run Scheduled tests
+  #       run: robot -d results -o output_scheduled.xml "AllRide Test Cases/Test Cases/Scheduled Flow/ScheduledTickets"
+  #       continue-on-error: true
 
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: output_regular_scheduled
+  #         path: results/*.xml
+
+  # ---------- Rounds (comentado) ----------
+  # rounds:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup Python and pip
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.8
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk robotframework-websocketclient
+  #     - name: Run Rounds tests
+  #       run: robot -d results -o output_rounds.xml "AllRide Test Cases/Test Cases/Rounds"
+  #       continue-on-error: true
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: output_rounds
+  #         path: results/output_rounds.xml
+
+  # ---------- Fusión y Slack ----------
+  # merge_and_notify:
+  #   runs-on: ubuntu-latest
+  #   needs: [admin, rdd, regular_and_scheduled]   # rounds eliminado de needs
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #         ref: main
+
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         path: results
+
+  #     - run: |
+  #         pip install robotframework slack_sdk
+  #         rebot --output output.xml results/*/*.xml
+  #       continue-on-error: true
+
+  #     - name: Run sendTestToSlack.py
+  #       run: python sendTestToSlack.py
+  #       working-directory: ${{ github.workspace }}
