@@ -1,6 +1,6 @@
 import time
 import threading
-from websocket import create_connection, WebSocketConnectionClosedException
+from websocket import create_connection
 
 
 class CarpoolRealtimeFlow:
@@ -18,16 +18,35 @@ class CarpoolRealtimeFlow:
         self.stop_flag = False
         self.error = None
 
-        # reconnection
-        self.max_retries = 5
-        self.retry_delay = 2  # seconds
+        # reconexión
+        self.max_retries = 3
+        self.retry_delay = 2  # segundos
+
+        # timeout global
+        self.global_timeout = 180  # segundos
+        self.start_time = time.time()
+
+    # -----------------------------------------------------
+    # TIMEOUT GLOBAL
+    # -----------------------------------------------------
+    def _check_global_timeout(self):
+        if time.time() - self.start_time > self.global_timeout:
+            if not self.error:
+                self.error = "Global timeout reached"
+            self.stop_flag = True
+            print("[TIMEOUT] Global timeout reached, stopping flow.")
+            return True
+        return False
 
     # -----------------------------------------------------
     # CONNECT / RECONNECT
     # -----------------------------------------------------
     def _connect_socket(self, url, name):
-        """Connect or reconnect a websocket."""
+        """Conecta o re-conecta un websocket."""
         for attempt in range(1, self.max_retries + 1):
+            if self._check_global_timeout():
+                return None
+
             try:
                 ws = create_connection(url, ping_interval=0)
                 print(f"[OK] Connected {name} (attempt {attempt})")
@@ -49,10 +68,13 @@ class CarpoolRealtimeFlow:
         self.sock_user = self._connect_socket(self.user_url, "user")
 
     # -----------------------------------------------------
-    # SAFE SEND with automatic reconnection
+    # SAFE SEND con reconexión
     # -----------------------------------------------------
     def safe_send(self, sock, message, is_driver=True):
-        """Send a message; reconnect and retry if pipe is broken."""
+        """Envía un mensaje; si falla, reintenta una vez tras reconectar."""
+        if self.stop_flag or self._check_global_timeout():
+            return False
+
         try:
             sock.send(message)
             return True
@@ -66,12 +88,13 @@ class CarpoolRealtimeFlow:
                 self.reconnect_user()
                 sock = self.sock_user
 
-            if not sock:
-                self.error = f"Fatal: Could not reconnect {'driver' if is_driver else 'user'}"
+            if self.stop_flag or self._check_global_timeout() or not sock:
+                if not self.error:
+                    self.error = f"Fatal: Could not reconnect {'driver' if is_driver else 'user'}"
                 self.stop_flag = True
                 return False
 
-            # retry send
+            # Reintento de envío
             try:
                 sock.send(message)
                 print("[OK] Resent message after reconnection")
@@ -84,22 +107,29 @@ class CarpoolRealtimeFlow:
     # -----------------------------------------------------
     # SAFE RECV
     # -----------------------------------------------------
-    def safe_recv(self, sock, timeout=10):
+    def safe_recv(self, sock, timeout=5):
+        if self.stop_flag or self._check_global_timeout():
+            return None
+
         sock.settimeout(timeout)
         try:
             return sock.recv()
         except Exception:
+            # Si no llega nada, seguimos; no es crítico
             return None
 
     # -----------------------------------------------------
     # PING KEEPALIVE
     # -----------------------------------------------------
-    def ping_loop(self, sock, is_driver=True):
-        while not self.stop_flag:
+    def ping_loop(self, name, is_driver=True):
+        sock = self.sock_driver if is_driver else self.sock_user
+
+        while not self.stop_flag and not self._check_global_timeout():
             try:
-                sock.ping()
-            except Exception:
-                print("[PING ERROR] reconnecting due to ping failure")
+                if sock:
+                    sock.ping()
+            except Exception as e:
+                print(f"[PING ERROR] {name}: {e}, trying to reconnect...")
                 if is_driver:
                     self.reconnect_driver()
                     sock = self.sock_driver
@@ -107,71 +137,95 @@ class CarpoolRealtimeFlow:
                     self.reconnect_user()
                     sock = self.sock_user
 
+                if not sock:
+                    self.error = f"Ping reconnection failed for {name}"
+                    self.stop_flag = True
+                    return
+
             time.sleep(3)
 
     # -----------------------------------------------------
     # MAIN FLOW
     # -----------------------------------------------------
     def run(self):
-        # connect both sockets
+        self.start_time = time.time()  # reinicia timer por si acaso
+
+        # Conectar ambos sockets
         self.sock_driver = self._connect_socket(self.driver_url, "driver")
         self.sock_user = self._connect_socket(self.user_url, "user")
 
         if not self.sock_driver or not self.sock_user:
             return f"FAIL: {self.error}"
 
-        # ping threads
-        threading.Thread(target=self.ping_loop, args=(self.sock_driver, True), daemon=True).start()
-        threading.Thread(target=self.ping_loop, args=(self.sock_user, False), daemon=True).start()
+        # Hilos de ping
+        threading.Thread(target=self.ping_loop, args=("driver", True), daemon=True).start()
+        threading.Thread(target=self.ping_loop, args=("user", False), daemon=True).start()
 
-        # ---------------------- DRIVER SEQUENCE ----------------------
-        seq = [
-            ("driver", '40/carpoolRealtime'),
-            ("driver", f'42/carpoolRealtime,["join", {{"userId":"{self.driver_id}","tripInstanceId":"{self.trip_id}"}}]'),
-            ("driver", f'42/carpoolRealtime,["start", {{"userId":"{self.driver_id}","tripInstanceId":"{self.trip_id}","latitude":-34.4111,"longitude":-70.8537}}]')
+        # ---------------------- DRIVER: 40 -> JOIN -> START ----------------------
+        driver_seq = [
+            ('driver', '40/carpoolRealtime'),
+            ('driver', f'42/carpoolRealtime,["join", {{"userId":"{self.driver_id}","tripInstanceId":"{self.trip_id}"}}]'),
+            ('driver', f'42/carpoolRealtime,["start", {{"userId":"{self.driver_id}","tripInstanceId":"{self.trip_id}","latitude":-34.4111,"longitude":-70.8537}}]')
         ]
 
-        for target, msg in seq:
-            sock = self.sock_driver if target == "driver" else self.sock_user
-            if not self.safe_send(sock, msg, is_driver=(target == "driver")):
+        for target, msg in driver_seq:
+            if self.stop_flag or self._check_global_timeout():
+                break
+
+            sock = self.sock_driver
+            if not self.safe_send(sock, msg, is_driver=True):
                 return f"FAIL: {self.error}"
             self.safe_recv(sock)
 
-        # ---------------------- USER SEQUENCE ----------------------
-        seq2 = [
-            ("user", '40/carpoolRealtime'),
-            ("user", f'42/carpoolRealtime,["join", {{"userId":"{self.user_id}","tripInstanceId":"{self.trip_id}"}}]')
+        if self.stop_flag and self.error:
+            return f"FAIL: {self.error}"
+
+        # ---------------------- USER: 40 -> JOIN ----------------------
+        user_seq = [
+            ('user', '40/carpoolRealtime'),
+            ('user', f'42/carpoolRealtime,["join", {{"userId":"{self.user_id}","tripInstanceId":"{self.trip_id}"}}]')
         ]
 
-        for target, msg in seq2:
+        for target, msg in user_seq:
+            if self.stop_flag or self._check_global_timeout():
+                break
+
             sock = self.sock_user
             if not self.safe_send(sock, msg, is_driver=False):
                 return f"FAIL: {self.error}"
             self.safe_recv(sock)
 
-        # ---------------------- POSITIONS ----------------------
-        for i in range(150):  # long journey
-            if self.stop_flag:
+        if self.stop_flag and self.error:
+            return f"FAIL: {self.error}"
+
+        # ---------------------- POSITIONS (viaje largo) ----------------------
+        for i in range(150):
+            if self.stop_flag or self._check_global_timeout():
                 break
 
-            # driver
-            self.safe_send(
+            # Driver newPosition
+            if not self.safe_send(
                 self.sock_driver,
                 f'42/carpoolRealtime,["newPosition", {{"latitude":-34.4112,"longitude":-70.8536}}]',
                 is_driver=True
-            )
+            ):
+                return f"FAIL: {self.error}"
+
             self.safe_recv(self.sock_driver)
 
-            # user
-            self.safe_send(
+            # User newPosition
+            if not self.safe_send(
                 self.sock_user,
                 f'42/carpoolRealtime,["newPosition", {{"latitude":-34.4113,"longitude":-70.8535}}]',
                 is_driver=False
-            )
+            ):
+                return f"FAIL: {self.error}"
+
             self.safe_recv(self.sock_user)
 
             time.sleep(1)
 
+        # ---------------------- RESULTADO FINAL ----------------------
         if self.error:
             return f"FAIL: {self.error}"
 

@@ -543,7 +543,7 @@ Start carpool departure
 
 Carpool Realtime - Realtime Flow Python
     ${WS_URL_DRIVER}=    Set Variable    ${WS_BASE}&token=${realTimeToken}
-    ${WS_URL_USER}=    Set Variable    ${WS_BASE}&token=${realTimeTokenUser}
+    ${WS_URL_USER}=      Set Variable    ${WS_BASE}&token=${realTimeTokenUser}
 
     ${result}=    Run Carpool Flow
     ...    ${WS_URL_DRIVER}
@@ -553,6 +553,7 @@ Carpool Realtime - Realtime Flow Python
     ...    ${tripInstance1}
 
     Should Be Equal As Strings    ${result}    PASS
+
 Get Chats
     Create Session    mysesion    ${STAGE_URL}    verify=true
 
