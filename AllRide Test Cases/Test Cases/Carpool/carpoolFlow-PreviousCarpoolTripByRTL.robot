@@ -12,7 +12,7 @@ Library     SeleniumLibrary
 Library     RPA.JSON
 Library     RPA.Smartsheet
 Resource    ../Variables/variablesStage.robot
-Library     WebSocketClient
+Library     WebSocketClient.py
 
 
 *** Variables ***
