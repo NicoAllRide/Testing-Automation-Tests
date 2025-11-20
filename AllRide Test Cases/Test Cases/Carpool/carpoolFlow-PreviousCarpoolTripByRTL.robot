@@ -12,7 +12,9 @@ Library     SeleniumLibrary
 Library     RPA.JSON
 Library     RPA.Smartsheet
 Resource    ../Variables/variablesStage.robot
-Library     WebSocketClient.py
+Library     WebSocketClient
+Library    carpool_flow.py
+
 
 
 *** Variables ***
@@ -539,260 +541,18 @@ Start carpool departure
     ${json}=    Set Variable    ${response.json()}
     ${accessTokenDeparture}=    Set Variable    []    ###Reeemplazar
 
-Carpool Realtime - Driver + User Flow
-    [Tags]    run_parallel    carpool
+Carpool Realtime - Realtime Flow Python
+    ${WS_URL_DRIVER}=    Set Variable    ${WS_BASE}&token=${realTimeToken}
+    ${WS_URL_USER}=    Set Variable    ${WS_BASE}&token=${realTimeTokenUser}
 
-    # Driver conecta e inicia viaje
-    ${WS_URL_1}=    Set Variable    ${WS_BASE}&token=${realTimeToken}
-    ${sock1}=    Connect    ${WS_URL_1}
-    Log    Connected Driver
+    ${result}=    Run Carpool Flow
+    ...    ${WS_URL_DRIVER}
+    ...    ${WS_URL_USER}
+    ...    ${DRIVER_ID}
+    ...    ${USER_ID}
+    ...    ${tripInstance1}
 
-    Send    ${sock1}    40/carpoolRealtime?token=${realTimeToken}
-    Sleep    5s
-    ${r0}=    Recv Data    ${sock1}
-    Log    NS Driver: ${r0}
-
-    Send    ${sock1}    42/carpoolRealtime,["join", {"userId":"${DRIVER_ID}","tripInstanceId":"${tripInstance1}"}]
-    Sleep    5s
-    ${r1}=    Recv Data    ${sock1}
-    Log    Join Driver: ${r1}
-
-    Send
-    ...    ${sock1}
-    ...    42/carpoolRealtime,["start", {"userId":"${DRIVER_ID}","tripInstanceId":"${tripInstance1}","latitude":-34.4111,"longitude":-70.8537}]
-    Sleep    5s
-    ${r2}=    Recv Data    ${sock1}
-    Log    Start Driver: ${r2}
-
-    # User conecta y se une
-    ${WS_URL_2}=    Set Variable    ${WS_BASE}&token=${realTimeTokenUser}
-    ${sock2}=    Connect    ${WS_URL_2}
-    Log    Connected User
-
-    Send    ${sock2}    40/carpoolRealtime?token=${realTimeTokenUser}
-    Sleep    5s
-    ${s0}=    Recv Data    ${sock2}
-    Log    NS User: ${s0}
-
-    Send    ${sock2}    42/carpoolRealtime,["join", {"userId":"${USER_ID}","tripInstanceId":"${tripInstance1}"}]
-    Sleep    5s
-    ${s1}=    Recv Data    ${sock2}
-    Log    Join User: ${s1}
-
-    # Esperar boardingQueryDelay (5s) ANTES de mandar posiciones
-    Sleep    5s
-
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-    # Intercalar posiciones
-    Send    ${sock1}    42/carpoolRealtime,["newPosition", {"latitude":-34.4112,"longitude":-70.8536}]
-    Sleep    5s
-    ${dnp1}=    Recv Data    ${sock1}
-    Log    NP Driver: ${dnp1}
-
-    Send    ${sock2}    42/carpoolRealtime,["newPosition", {"latitude":-34.4113,"longitude":-70.8535}]
-    Sleep    5s
-    ${unp1}=    Recv Data    ${sock2}
-    Log    NP User: ${unp1}
-
+    Should Be Equal As Strings    ${result}    PASS
 Get Chats
     Create Session    mysesion    ${STAGE_URL}    verify=true
 
