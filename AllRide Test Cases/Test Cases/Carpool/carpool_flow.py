@@ -115,7 +115,6 @@ class CarpoolRealtimeFlow:
         try:
             return sock.recv()
         except Exception:
-            # Si no llega nada, seguimos; no es crítico
             return None
 
     # -----------------------------------------------------
@@ -148,7 +147,7 @@ class CarpoolRealtimeFlow:
     # MAIN FLOW
     # -----------------------------------------------------
     def run(self):
-        self.start_time = time.time()  # reinicia timer por si acaso
+        self.start_time = time.time()
 
         # Conectar ambos sockets
         self.sock_driver = self._connect_socket(self.driver_url, "driver")
@@ -161,7 +160,7 @@ class CarpoolRealtimeFlow:
         threading.Thread(target=self.ping_loop, args=("driver", True), daemon=True).start()
         threading.Thread(target=self.ping_loop, args=("user", False), daemon=True).start()
 
-        # ---------------------- DRIVER: 40 -> JOIN -> START ----------------------
+        # ---------------------- DRIVER FLOW ----------------------
         driver_seq = [
             ('driver', '40/carpoolRealtime'),
             ('driver', f'42/carpoolRealtime,["join", {{"userId":"{self.driver_id}","tripInstanceId":"{self.trip_id}"}}]'),
@@ -180,7 +179,7 @@ class CarpoolRealtimeFlow:
         if self.stop_flag and self.error:
             return f"FAIL: {self.error}"
 
-        # ---------------------- USER: 40 -> JOIN ----------------------
+        # ---------------------- USER FLOW ----------------------
         user_seq = [
             ('user', '40/carpoolRealtime'),
             ('user', f'42/carpoolRealtime,["join", {{"userId":"{self.user_id}","tripInstanceId":"{self.trip_id}"}}]')
@@ -198,8 +197,8 @@ class CarpoolRealtimeFlow:
         if self.stop_flag and self.error:
             return f"FAIL: {self.error}"
 
-        # ---------------------- POSITIONS (viaje largo) ----------------------
-        for i in range(150):
+        # ---------------------- POSITIONS (20 eventos) ----------------------
+        for i in range(20):  # ~130 segundos de flujo real
             if self.stop_flag or self._check_global_timeout():
                 break
 
@@ -210,7 +209,6 @@ class CarpoolRealtimeFlow:
                 is_driver=True
             ):
                 return f"FAIL: {self.error}"
-
             self.safe_recv(self.sock_driver)
 
             # User newPosition
@@ -220,10 +218,9 @@ class CarpoolRealtimeFlow:
                 is_driver=False
             ):
                 return f"FAIL: {self.error}"
-
             self.safe_recv(self.sock_user)
 
-            time.sleep(1)
+            time.sleep(6.5)  # regla real del backend
 
         # ---------------------- RESULTADO FINAL ----------------------
         if self.error:
