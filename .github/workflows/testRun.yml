@@ -1,4 +1,4 @@
-name: Run Robot Framework Tests (Parallel, No Artifacts)
+name: Run Robot Framework Tests and Send Email
 
 on:
   repository_dispatch:
@@ -6,152 +6,170 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: parallel-tests
+  group: regression-tests-stage-concurrency-group
   cancel-in-progress: true
 
-jobs:
+env:
+  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+  TOKEN_ADMIN: ${{ secrets.TOKEN_ADMIN }}
+  TOKEN_NICO: ${{ secrets.TOKEN_NICO }}
+  TOKEN_PEDRO: ${{ secrets.TOKEN_PEDRO }}
+  TOKEN_KRATOS: ${{ secrets.TOKEN_KRATOS }}
+  TOKEN_NARUTO: ${{ secrets.TOKEN_NARUTO }}
+  TZ: America/Santiago
 
-  # ============================
-  #      JOB: ADMIN
-  # ============================
+jobs:
+  # ---------- Admin ----------
   admin:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v4
+      - name: Setup Python and pip
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
-      - run: |
+      - name: Install dependencies
+        run: |
           pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk
 
-      - run: robot -d results -o output_admin.xml "AllRide Test Cases/Test Cases/Admin"
+      - name: Wait before running Admin tests
+        run: sleep 45
+
+      - name: Run Admin tests
+        run: robot -d results -o output_admin.xml "AllRide Test Cases/Test Cases/Admin"
         continue-on-error: true
 
-      # sube archivo temporal sin ocupar storage
       - uses: actions/upload-artifact@v4
         with:
-          name: admin_output
+          name: output_admin
           path: results/output_admin.xml
-          retention-days: 0
+          retention-days: 0  # <─ NO GUARDA NADA PERMANENTE
 
-
-  # ============================
-  #      JOB: CARPOOL
-  # ============================
+  # ---------- Carpool ----------
   carpool:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v4
+      - name: Setup Python and pip
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
-      - run: |
-          pip install robotframework websocket-client robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk
+      - name: Install dependencies
+        run: |
+          pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk websocket-client
 
-      - run: robot -d results -o output_carpool.xml "AllRide Test Cases/Test Cases/Carpool"
+      - name: Wait before running Carpool tests
+        run: sleep 45
+
+      - name: Run Carpool tests
+        run: robot -d results -o output_carpool.xml "AllRide Test Cases/Test Cases/Carpool"
         continue-on-error: true
 
       - uses: actions/upload-artifact@v4
         with:
-          name: carpool_output
+          name: output_carpool
           path: results/output_carpool.xml
           retention-days: 0
 
-
-  # ============================
-  #      JOB: RDD
-  # ============================
+  # ---------- RDD ----------
   rdd:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v4
+      - name: Setup Python and pip
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
-      - run: |
+      - name: Install dependencies
+        run: |
           pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk
 
-      - run: robot -d results -o output_rdd.xml "AllRide Test Cases/Test Cases/RDD Flow"
+      - name: Wait before running RDD tests
+        run: sleep 45
+
+      - name: Run RDD tests
+        run: robot -d results -o output_rdd.xml "AllRide Test Cases/Test Cases/RDD Flow"
         continue-on-error: true
 
       - uses: actions/upload-artifact@v4
         with:
-          name: rdd_output
+          name: output_rdd
           path: results/output_rdd.xml
           retention-days: 0
 
-
-  # ============================
-  #      JOB: REGULAR + SCHED
-  # ============================
+  # ---------- Regular + Scheduled ----------
   regular_and_scheduled:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v4
+      - name: Setup Python and pip
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
-      - run: |
+      - name: Install dependencies
+        run: |
           pip install robotframework robotframework-requests robotframework-seleniumlibrary rpaframework requests slack_sdk
 
-      - run: robot -d results_regular -o output_regular.xml "AllRide Test Cases/Test Cases/Regular Flow"
+      - name: Wait before running Regular/Scheduled tests
+        run: sleep 45
+
+      - name: Run Regular tests
+        run: robot -d results_regular -o output_regular.xml "AllRide Test Cases/Test Cases/Regular Flow"
         continue-on-error: true
 
-      - run: robot -d results_sched -o output_sched.xml "AllRide Test Cases/Test Cases/Scheduled Flow/ScheduledTickets"
+      - name: Run Scheduled tests
+        run: robot -d results_sched -o output_scheduled.xml "AllRide Test Cases/Test Cases/Scheduled Flow/ScheduledTickets"
         continue-on-error: true
 
       - uses: actions/upload-artifact@v4
         with:
-          name: regular_outputs
+          name: output_regular_scheduled
           path: |
             results_regular/output_regular.xml
-            results_sched/output_sched.xml
+            results_sched/output_scheduled.xml
           retention-days: 0
 
-
-  # ============================
-  #      JOB FINAL
-  # ============================
-  merge_and_commit:
+  # ---------- Merge + Slack ----------
+  merge_and_notify:
     runs-on: ubuntu-latest
     needs: [admin, carpool, rdd, regular_and_scheduled]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: main
 
-      - name: Download all outputs
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          path: merged_results
+          path: results
 
-      - name: Install Robot + Slack
+      - name: Wait before merging reports
+        run: sleep 45
+
+      - name: Install minimal deps
         run: |
           pip install robotframework slack_sdk
 
-      - name: Merge XMLs
+      - name: Merge outputs
         run: |
-          rebot --output output.xml merged_results/*/*.xml
+          rebot --output output.xml results/*/*.xml
+        continue-on-error: true
 
-      - name: Commit merged output
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-
-          cp output.xml output_final.xml
-          git add output_final.xml
-
-          git commit -m "Merged outputs [skip ci]" || echo "No changes"
-          git push origin main
-
-      - name: Send Slack Notification
+      - name: Run sendTestToSlack.py
         run: python sendTestToSlack.py
+        working-directory: ${{ github.workspace }}
+
+      - name: Clean up artifacts after use
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: '*'
+        continue-on-error: true
