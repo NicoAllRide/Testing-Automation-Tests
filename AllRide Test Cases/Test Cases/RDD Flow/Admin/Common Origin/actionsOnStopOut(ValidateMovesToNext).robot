@@ -61,8 +61,6 @@ Set Date Variables
     ${expiration_date_qr}=    Set Variable    ${fecha_manana}T14:10:37.968Z
     Set Global Variable    ${expiration_date_qr}
 
-
-
 Time + 1 Hour
     ${date}    Get Current Date    time_zone=UTC    exclude_millis=yes
     ${formatted_date}    Convert Date    ${date}    result_format=%Y-%m-%dT%H:%M:%S.%fZ
@@ -77,7 +75,6 @@ Time + 1 Hour
 
 Verify Open RDD in Community
     Skip
-
         # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     ${url}=    Set Variable
     ...    ${STAGE_URL}/api/v1/superadmin/communities/${idComunidad}
@@ -106,7 +103,7 @@ Get Places
     # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
     Should Be Equal As Numbers    ${response.status_code}    200
     Should Not Be Empty    ${response.json()}
-Create RDD As Admin With Approval
+Create RDD As Admin
     Create Session    mysesion    ${STAGE_URL}    verify=true
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
@@ -117,7 +114,7 @@ Create RDD As Admin With Approval
     ...    mysesion
     ...    url=/api/v1/admin/pb/odd?community=${idComunidad}
 
-    ...    data={"superCommunityId":"${idSuperCommunity}","adminId":"${idAdmin}","adminName":"Soporte AllRide","oddSimpleFlow":false,"state":"pendingAdminApproval","name":"RDD With Approval","oddType":"Taxis Coni y Nico","placeLat":-33.4098734,"placeLon":-70.5673477,"serviceCost":null,"apportionByParams":[],"direction":"out","comments":"","serviceDate":"${formatted_one_hour_later}","extraMinutes":0,"estimatedArrival":"${r_estimated_arrival1}","reservations":[{"userId":"${idNico}","stopId":"655d11d88a5a1a1ff0328466","placeId":null,"order":0,"estimatedArrival":"${r_estimated_arrival1}","distances":{"fromPrevious":0,"toNext":4334,"distanceToLocation":4334,"pctToLocation":1}}],"waypoints":[[-70.54732,-33.39116],[-70.54727000000001,-33.39133],[-70.54721,-33.391470000000005],[-70.54716,-33.391540000000006],[-70.54705,-33.39162],[-70.54695000000001,-33.3917],[-70.54689,-33.391780000000004],[-70.54689,-33.39181],[-70.54693,-33.39188],[-70.54698,-33.3919],[-70.54719,-33.39193],[-70.54751,-33.391270000000006],[-70.54761,-33.3911],[-70.54766000000001,-33.390950000000004],[-70.54774,-33.390660000000004],[-70.54785000000001,-33.39038],[-70.54812000000001,-33.38983],[-70.54827,-33.389500000000005],[-70.54875000000001,-33.38969],[-70.54948,-33.389970000000005],[-70.54953,-33.390010000000004],[-70.54971,-33.39011],[-70.55007,-33.39025],[-70.55031000000001,-33.390370000000004],[-70.5505,-33.390480000000004],[-70.55272000000001,-33.39135],[-70.55353000000001,-33.39166],[-70.55436,-33.39193],[-70.55537000000001,-33.392300000000006],[-70.55657000000001,-33.39271],[-70.55855000000001,-33.393370000000004],[-70.56148,-33.394400000000005],[-70.56253000000001,-33.394740000000006],[-70.56457,-33.395480000000006],[-70.56617,-33.39603],[-70.56643000000001,-33.396060000000006],[-70.56678000000001,-33.39616],[-70.56710000000001,-33.39627],[-70.5673,-33.39631],[-70.56773000000001,-33.396460000000005],[-70.56902000000001,-33.396910000000005],[-70.56936,-33.39705],[-70.57007,-33.397310000000004],[-70.5706,-33.39745],[-70.57089,-33.397560000000006],[-70.57161,-33.397830000000006],[-70.57183,-33.39777],[-70.5719,-33.39772],[-70.57194000000001,-33.39764],[-70.57193000000001,-33.39746],[-70.5719,-33.397360000000006],[-70.57187,-33.397310000000004],[-70.57182,-33.39728],[-70.57173,-33.397270000000006],[-70.57153000000001,-33.397330000000004],[-70.57133,-33.39791],[-70.57121000000001,-33.398250000000004],[-70.57106,-33.398500000000006],[-70.57043,-33.40035],[-70.56976,-33.40227],[-70.56971,-33.402390000000004],[-70.56920000000001,-33.40377],[-70.56885000000001,-33.40473],[-70.56839000000001,-33.406040000000004],[-70.56824,-33.406420000000004],[-70.56827000000001,-33.406560000000006],[-70.56826000000001,-33.40666],[-70.56773000000001,-33.407790000000006],[-70.56759000000001,-33.408150000000006],[-70.56728000000001,-33.40885],[-70.56711,-33.409330000000004],[-70.56695,-33.40979]],"estimatedDistance":4334,"startLocation":{"lat":-33.3908833,"lon":-70.54620129999999,"loc":[-70.54620129999999,-33.3908833],"placeId":null,"stopId":"655d11d88a5a1a1ff0328466"},"endLocation":{"lat":-33.4098734,"lon":-70.5673477,"loc":[-70.5673477,-33.4098734],"placeId":null,"stopId":"655d11d88a5a1a1ff0328464","referencePoint":true},"placeWaitTime":0,"reason":"","linkedDeparture":null,"reservationsToLink":[],"isPastService":false,"communityId":"","placeId":null,"stopId":"655d11d88a5a1a1ff0328464","serviceHour":"","placeName":"Mall Apumanque Avenida Manquehue Sur, Las Condes, Chile","placeLongName":"Mall Apumanque Avenida Manquehue Sur, Las Condes, Chile","hourIsDepartureOrArrival":"arrival","roundedDistance":"4.33","travelTime":529,"originalEstimatedArrival":"","originalServiceDate":"","originalTravelTime":529,"adjustmentFactor":1,"totalReservations":1,"arrivalDate":"${arrival_date}"}
+    ...    data={"superCommunityId":"653fd68233d83952fafcd4be","adminId":"66d75c62a1b7bc9a1dd231c6","adminName":"Soporte AllRide","oddSimpleFlow":false,"state":"pendingDriverAssignment","name":"RDD action on stop","oddType":"Taxis Coni y Nico","placeLat":-34.4111,"placeLon":-70.8537,"serviceCost":0,"calculatedCosts":{},"apportionByParams":[],"direction":"out","comments":"","serviceDate":"${formatted_one_hour_later}","extraMinutes":0,"estimatedArrival":"${r_estimated_arrival1}","reservations":[{"manuallyBooked":true,"userId":"65e8e076337a90a35ba6e8dd","stopId":"65e975a20bdb0bb5d4008898","placeId":null,"order":2,"estimatedArrival":"2025-07-17T20:35:30.000Z","distances":{"fromPrevious":110413,"toNext":1732,"distanceToLocation":1732,"pctToLocation":0.014707380863421759}},{"manuallyBooked":true,"userId":"65e092afca7842b1032f12e2","stopId":"654054d62d5b0119311ae116","placeId":null,"order":0,"estimatedArrival":"2025-07-17T19:00:00.000Z","distances":{"fromPrevious":0,"toNext":5619,"distanceToLocation":117764,"pctToLocation":1}},{"manuallyBooked":true,"userId":"67a231824e4333dad7f36f75","stopId":"653ffde9f90509541a749e18","placeId":null,"order":1,"estimatedArrival":"2025-07-17T19:13:30.000Z","distances":{"fromPrevious":5619,"toNext":110413,"distanceToLocation":112145,"pctToLocation":0.952285927787779}}],"waypoints":[[-70.78127,-33.53278],[-70.78187000000001,-33.53273],[-70.78214000000001,-33.53298],[-70.78391,-33.53418],[-70.78754,-33.536660000000005],[-70.7912,-33.53922],[-70.79151,-33.53954],[-70.79091000000001,-33.5401],[-70.78971,-33.54117],[-70.78827000000001,-33.542440000000006],[-70.78926,-33.5431],[-70.79019000000001,-33.54377],[-70.79103,-33.54442],[-70.79225000000001,-33.545280000000005],[-70.79266000000001,-33.545590000000004],[-70.79249,-33.54572],[-70.79157000000001,-33.54657],[-70.79055000000001,-33.54751],[-70.78996000000001,-33.54788],[-70.78862000000001,-33.54905],[-70.79088,-33.550610000000006],[-70.79537,-33.55371],[-70.79554,-33.55393],[-70.7954,-33.554170000000006],[-70.79511000000001,-33.55438],[-70.79278000000001,-33.55637],[-70.78927,-33.559050000000006],[-70.78606,-33.56157],[-70.78426,-33.56295],[-70.78295,-33.56389],[-70.78149,-33.562490000000004],[-70.7814,-33.562270000000005],[-70.78085,-33.5623],[-70.78066000000001,-33.56199],[-70.78054,-33.562000000000005],[-70.78049,-33.56222],[-70.78054,-33.562000000000005],[-70.78066000000001,-33.56199],[-70.78085,-33.5623],[-70.78134,-33.56214],[-70.78122,-33.56183],[-70.78107,-33.56147],[-70.78062,-33.56033],[-70.7795,-33.55903],[-70.77926000000001,-33.55874],[-70.77883,-33.55754],[-70.77839,-33.55639],[-70.77835,-33.55621],[-70.77773,-33.55646],[-70.77586000000001,-33.55711],[-70.77583,-33.55713],[-70.77575,-33.55715],[-70.77561,-33.557210000000005],[-70.77532000000001,-33.557300000000005],[-70.77439000000001,-33.55762],[-70.77291000000001,-33.55811],[-70.76689,-33.56022],[-70.76491,-33.560900000000004],[-70.76324000000001,-33.560970000000005],[-70.76198000000001,-33.561460000000004],[-70.75973,-33.56224],[-70.7594,-33.562020000000004],[-70.75895000000001,-33.56148],[-70.75840000000001,-33.560810000000004],[-70.7564,-33.558530000000005],[-70.75508,-33.55706],[-70.75394,-33.55575],[-70.75362000000001,-33.55595],[-70.75298000000001,-33.55644],[-70.75044000000001,-33.55839],[-70.74965,-33.559000000000005],[-70.74497000000001,-33.56262],[-70.74264000000001,-33.56436],[-70.73556,-33.5687],[-70.73047000000001,-33.571780000000004],[-70.72992,-33.571360000000006],[-70.72967,-33.57081],[-70.72903000000001,-33.569210000000005],[-70.72845000000001,-33.56777],[-70.72827000000001,-33.56767],[-70.72657000000001,-33.567690000000006],[-70.72569,-33.56787],[-70.72436,-33.56786],[-70.7222,-33.56772],[-70.71811000000001,-33.56752],[-70.71650000000001,-33.567510000000006],[-70.71537000000001,-33.56739],[-70.7123,-33.567240000000005],[-70.71192,-33.56736],[-70.71201,-33.56797],[-70.71222,-33.569250000000004],[-70.71283000000001,-33.57271],[-70.7132,-33.573980000000006],[-70.71374,-33.57743],[-70.71404000000001,-33.58001],[-70.71408000000001,-33.58113],[-70.71406,-33.58223],[-70.71453000000001,-33.58639],[-70.71598,-33.59801],[-70.71676000000001,-33.60428],[-70.71692,-33.60645],[-70.71683,-33.60822],[-70.7166,-33.61027],[-70.71592000000001,-33.61497],[-70.7137,-33.6302],[-70.71259,-33.637660000000004],[-70.71188000000001,-33.6426],[-70.7116,-33.64484],[-70.71163,-33.64643],[-70.71205,-33.64808],[-70.71386000000001,-33.65236],[-70.71593,-33.65704],[-70.71973000000001,-33.66559],[-70.72279,-33.6728],[-70.72563000000001,-33.679410000000004],[-70.7261,-33.6807],[-70.72632,-33.681920000000005],[-70.72647,-33.68484],[-70.72644000000001,-33.68553],[-70.72602,-33.688100000000006],[-70.72540000000001,-33.69005],[-70.72316000000001,-33.69698],[-70.72264000000001,-33.69868],[-70.72242,-33.70028],[-70.72256,-33.70212],[-70.7227,-33.70271],[-70.72321000000001,-33.70517],[-70.72453,-33.710350000000005],[-70.72616000000001,-33.716660000000005],[-70.72667000000001,-33.71855],[-70.72781,-33.72101],[-70.72994,-33.725280000000005],[-70.73196,-33.72927],[-70.73529,-33.735820000000004],[-70.73737000000001,-33.74009],[-70.73829,-33.74327],[-70.73941,-33.74805],[-70.74010000000001,-33.75112],[-70.74087,-33.755860000000006],[-70.74264000000001,-33.766580000000005],[-70.74459,-33.77854],[-70.74956,-33.808490000000006],[-70.75317000000001,-33.830600000000004],[-70.75338,-33.83214],[-70.75332,-33.832950000000004],[-70.75258000000001,-33.836020000000005],[-70.75013000000001,-33.84619],[-70.74812,-33.85483],[-70.74775000000001,-33.85882],[-70.74747,-33.859930000000006],[-70.74714,-33.860530000000004],[-70.74559,-33.86205],[-70.74256000000001,-33.864630000000005],[-70.74225000000001,-33.86504],[-70.74162000000001,-33.866400000000006],[-70.73767000000001,-33.87892],[-70.73646000000001,-33.882830000000006],[-70.73521000000001,-33.89139],[-70.73433,-33.89715],[-70.7342,-33.89875],[-70.73433,-33.900110000000005],[-70.73464,-33.90117],[-70.73494000000001,-33.9024],[-70.73491,-33.90312],[-70.73447,-33.9044],[-70.7338,-33.905300000000004],[-70.7316,-33.90742],[-70.72821,-33.910520000000005],[-70.72563000000001,-33.912980000000005],[-70.72495,-33.914010000000005],[-70.72465000000001,-33.915200000000006],[-70.72474000000001,-33.91695],[-70.72512,-33.91903],[-70.72499,-33.92004],[-70.72476,-33.92063],[-70.72375000000001,-33.921980000000005],[-70.72003000000001,-33.92443],[-70.71888000000001,-33.92531],[-70.71801,-33.926230000000004],[-70.71696,-33.92815],[-70.71639,-33.929280000000006],[-70.7146,-33.932930000000006],[-70.71262,-33.93721],[-70.71238000000001,-33.93871],[-70.71215000000001,-33.94205],[-70.71198000000001,-33.94505],[-70.71237,-33.94736],[-70.71347,-33.951950000000004],[-70.71355000000001,-33.953100000000006],[-70.71339,-33.954240000000006],[-70.7128,-33.956050000000005],[-70.71075,-33.96125],[-70.70649,-33.97233],[-70.70306000000001,-33.98106],[-70.70231000000001,-33.98306],[-70.70101000000001,-33.98695],[-70.70108,-33.990210000000005],[-70.70138,-33.99398],[-70.70248000000001,-34.00489],[-70.70370000000001,-34.0168],[-70.70508000000001,-34.03051],[-70.7056,-34.03401],[-70.70632,-34.0356],[-70.70718000000001,-34.03661],[-70.70819,-34.03743],[-70.71049000000001,-34.03851],[-70.71324,-34.03947],[-70.71443000000001,-34.0399],[-70.71855000000001,-34.04139],[-70.72498,-34.04366],[-70.72658000000001,-34.04424],[-70.72958000000001,-34.04589],[-70.73288000000001,-34.04787],[-70.73613,-34.04981],[-70.73817000000001,-34.050790000000006],[-70.74669,-34.053540000000005],[-70.74894,-34.054460000000006],[-70.7505,-34.05547],[-70.75157,-34.056400000000004],[-70.75330000000001,-34.058690000000006],[-70.7557,-34.06271],[-70.7596,-34.0689],[-70.76164,-34.0718],[-70.76251,-34.07285],[-70.77195,-34.082770000000004],[-70.77406,-34.08532],[-70.77484000000001,-34.086960000000005],[-70.77689000000001,-34.09313],[-70.77860000000001,-34.09843],[-70.77962000000001,-34.10177],[-70.77992,-34.10418],[-70.78034000000001,-34.11188],[-70.78066000000001,-34.11723],[-70.78153,-34.12163],[-70.78331,-34.12896],[-70.78548,-34.13819],[-70.78695,-34.14426],[-70.78772000000001,-34.146460000000005],[-70.78893000000001,-34.149010000000004],[-70.79144000000001,-34.15428],[-70.79272,-34.157050000000005],[-70.79346000000001,-34.15926],[-70.79390000000001,-34.16143],[-70.79408000000001,-34.164910000000006],[-70.79404000000001,-34.165620000000004],[-70.79341000000001,-34.16919],[-70.78959,-34.182950000000005],[-70.78775,-34.18938],[-70.78539,-34.198260000000005],[-70.78503,-34.201010000000004],[-70.78487000000001,-34.20563],[-70.78507,-34.20819],[-70.78589000000001,-34.211240000000004],[-70.7881,-34.21587],[-70.79247000000001,-34.22477],[-70.79312,-34.22668],[-70.79321,-34.22894],[-70.79282,-34.23067],[-70.79212000000001,-34.232530000000004],[-70.79194000000001,-34.234120000000004],[-70.79205,-34.23509],[-70.79303,-34.237320000000004],[-70.79461,-34.24015],[-70.79574000000001,-34.2421],[-70.79857000000001,-34.24707],[-70.80594,-34.26001],[-70.81633000000001,-34.27806],[-70.82137,-34.28689],[-70.82215000000001,-34.28857],[-70.82249,-34.29023],[-70.82352,-34.29544],[-70.82645000000001,-34.30995],[-70.82979,-34.32001],[-70.83322000000001,-34.330270000000006],[-70.83510000000001,-34.335890000000006],[-70.83575,-34.33744],[-70.83958000000001,-34.3442],[-70.84298000000001,-34.35015],[-70.84688,-34.35692],[-70.85213,-34.36607],[-70.87008,-34.397310000000004],[-70.87209,-34.40068],[-70.87319000000001,-34.40236],[-70.87364000000001,-34.40238],[-70.87387000000001,-34.402060000000006],[-70.87373000000001,-34.401810000000005],[-70.872,-34.401810000000005],[-70.86663,-34.40241],[-70.86243,-34.40279],[-70.85940000000001,-34.403040000000004],[-70.85891000000001,-34.40249],[-70.85822,-34.401590000000006],[-70.85865000000001,-34.401680000000006],[-70.85896000000001,-34.40178],[-70.85932000000001,-34.40193],[-70.85999000000001,-34.40195],[-70.8602,-34.401920000000004],[-70.86052000000001,-34.402370000000005],[-70.86080000000001,-34.402860000000004],[-70.85961,-34.403020000000005],[-70.85802000000001,-34.40319],[-70.85725000000001,-34.4033],[-70.85693,-34.403380000000006],[-70.85761000000001,-34.40424],[-70.85888,-34.405640000000005],[-70.85955,-34.406600000000005],[-70.8583,-34.40697],[-70.85414,-34.40818],[-70.85308,-34.408530000000006],[-70.85332000000001,-34.409400000000005],[-70.85340000000001,-34.409710000000004],[-70.85372000000001,-34.41085],[-70.85381000000001,-34.41107]],"estimatedDistance":117764,"startLocation":{"lat":-33.532782,"lon":-70.7812735,"loc":[-70.7812735,-33.532782],"placeId":null,"stopId":"654054d62d5b0119311ae116","referencePoint":true},"endLocation":{"lat":-34.4111,"lon":-70.8537,"loc":[-70.8537,-34.4111],"placeId":"6654d4acba54fe502d4e6b6a","stopId":"6654d4acba54fe502d4e6b6b"},"placeWaitTime":0,"reason":"","linkedDeparture":null,"linkedDepartures":[],"reservationsToLink":[],"cabify":{"productId":null},"asap":false,"isEmergency":false,"isPastService":false,"communityId":"","placeId":"6654d4acba54fe502d4e6b6a","stopId":"6654d4acba54fe502d4e6b6b","serviceHour":"2025-07-17T19:00:00.627Z","placeName":"Hospital Rengo","placeLongName":"Hospital Rengo","hourIsDepartureOrArrival":"departure","roundedDistance":"117.76","travelTime":6003,"originalEstimatedArrival":"","originalServiceDate":"","originalTravelTime":6003,"adjustmentFactor":1,"totalReservations":3}
     ...    headers=${headers}
     # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
     ${code}=    convert to string    ${response.status_code}
@@ -126,31 +123,62 @@ Create RDD As Admin With Approval
 
     ${rddId}=    Set Variable    ${response.json()}[_id]
     Set Global Variable    ${rddId}
-Approve RDD
-    Create Session    mysesion    ${STAGE_URL}    verify=true
+    ${json}=    Set Variable    ${response.json()}
+
+      # Validar que el estado sea pendingDriverAssignment
+    Should Be Equal As Strings    ${json}[state]    pendingDriverAssignment
+    ...    msg=❌ Expected state to be 'pendingDriverAssignment' but got '${json}[state]'
+
+    # Validar que oddType sea el correcto
+    Should Be Equal As Strings    ${json}[oddType]    Taxis Coni y Nico
+    ...    msg=❌ Expected oddType to be 'Taxis Coni y Nico' but got '${json}[oddType]'
+
+    # Validar que isLimitedODD esté vacío o no definido
+    Run Keyword And Ignore Error    Should Not Contain    ${json}    isLimitedODD
+
+    # Validar que sharing esté activado
+    Should Be True    ${json}[sharing]
+    ...    msg=❌ Sharing should be enabled
+
+    # Validar que restrictPassengers.enabled esté en false
+    
+    ${reservationLenght}=    Get Length    ${response.json()}[reservations]
+    # Validar cantidad de reservas (3 en este caso)
+    Length Should Be    ${json}[reservations]    3
+    ...    msg=❌ Expected 3 reservations but found ${reservationLenght}
+    # Validar estado histórico
+    Should Be Equal As Strings    ${json}[stateHistory][0][state]    created
+    Should Be Equal As Strings    ${json}[stateHistory][1][state]    pendingDriverAssignment
+    ...    msg=❌ Unexpected states in stateHistory
+
+    # Validar estimatedDistance no sea 0
+    Should Not Be Equal As Integers    ${json}[estimatedDistance]    0
+    ...    msg=❌ Estimated distance should not be 0
+
+Login User With Email(Obtain Token)
+        Create Session    mysesion    ${STAGE_URL}    verify=true
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
-
     # Configura las opciones de la solicitud (headers, auth)
-    ${headers}=    Create Dictionary    Authorization=${tokenAdmin}    Content-Type=application/json; charset=utf-8
+    ${jsonBody}=    Set Variable    {"username":"nicolas+endauto@allrideapp.com","password":"Equilibriozen123#"}
+    ${parsed_json}=    Evaluate    json.loads($jsonBody)    json
+    ${headers}=    Create Dictionary    Authorization=""    Content-Type=application/json
     # Realiza la solicitud GET en la sesión por defecto
-    ${response}=    PUT On Session
+    ${response}=    Post On Session
     ...    mysesion
-    ...    url=/api/v1/admin/pb/odd/approve/${rddId}?community=${idComunidad}
-    ...    data={}
+    ...    url=${loginUserUrl}
+    ...    json=${parsed_json}
     ...    headers=${headers}
     # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
     ${code}=    convert to string    ${response.status_code}
     Should Be Equal As Numbers    ${code}    200
     Log    ${code}
+    List Should Contain Value    ${response.json()}    accessToken            No accesToken found in Login!, Failing
+    ${accessToken}=    Set Variable    ${response.json()}[accessToken]
+    ${accessTokenNico}=    Evaluate    "Bearer ${accessToken}"
+    Set Global Variable    ${accessTokenNico}
 
-    ${rddId}=    Set Variable    ${response.json()}[_id]
-    Set Global Variable    ${rddId}
 
 
-####################################################
-##Get Routes As Driver Pendiente
-
-#######################################################
 
 Assign Driver
     Create Session    mysesion    ${STAGE_URL}    verify=true
@@ -246,6 +274,7 @@ Start Departure
     Log    ${code}
      Set Global Variable    ${departureToken}
 
+
 Get User QR(Nico)
     Create Session    mysesion    ${STAGE_URL}    verify=true
 
@@ -266,6 +295,27 @@ Get User QR(Nico)
     ${qrCodeNico}=    Set Variable    ${response.json()}[0][qrCode]
     Set Global Variable    ${qrCodeNico}
     Log    ${qrCodeNico}
+    Log    ${code}
+Get User QR(Kratos)
+    Create Session    mysesion    ${STAGE_URL}    verify=true
+
+    # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
+
+    # Configura las opciones de la solicitud (headers, auth)
+    ${headers}=    Create Dictionary    Authorization=${tokenAdmin}    Content-Type=application/json
+    # Realiza la solicitud GET en la sesión por defecto
+    ${response}=    POST On Session
+    ...    mysesion
+    ...    url=/api/v1/admin/users/qrCodes?community=${idComunidad}
+    ...    data={"ids":["${idKratos}"]}
+    ...    headers=${headers}
+    # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
+    ${code}=    convert to string    ${response.status_code}
+    Status Should Be    200
+
+    ${qrCodeKratos}=    Set Variable    ${response.json()}[0][qrCode]
+    Set Global Variable    ${qrCodeKratos}
+    Log    ${qrCodeKratos}
     Log    ${code}
 
 
@@ -297,7 +347,67 @@ Get RDD Stops As Driver
     # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
     Should Be Equal As Numbers    ${response.status_code}    200
 
+Validate With QR(Kratos)
+    Set Log Level    TRACE
+
+    Create Session    mysesion    ${STAGE_URL}    verify=true
+
+    # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
+
+    # Configura las opciones de la solicitud (headers, auth)
+    ${headers}=    Create Dictionary    Authorization=${departureToken}    Content-Type=application/json
+    # Realiza la solicitud GET en la sesión por defecto
+    ${response}=    POST On Session
+    ...    mysesion
+    ...    url=/api/v1/pb/provider/departures/validate
+    ...    data={"validationString":"${qrCodeKratos}"}
+    ...    headers=${headers}
+    # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
+    ${code}=    convert to string    ${response.status_code}
+    Status Should Be    200
+    Log    ${code}
+
+
+Action On Stop 2
+    [Documentation]    The "Complete Stop" button should set the current reservation to "done" and leave the remaining reservations in "pending"
+    Set Log Level    TRACE
+
+    Create Session    mysesion    ${STAGE_URL}    verify=true
+
+    # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
+
+    # Configura las opciones de la solicitud (headers, auth)
+    ${headers}=    Create Dictionary    Authorization=${departureToken}    Content-Type=application/json
+    # Realiza la solicitud GET en la sesión por defecto
+    ${response}=    POST On Session
+    ...    mysesion
+    ...    url=/api/v2/pb/driver/oddepartures/action/653ffde9f90509541a749e18
+    ...    data={}
+    ...    headers=${headers}
+    # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
+    ${code}=    convert to string    ${response.status_code}
+    Status Should Be    200
+    Log    ${code}
+    ${json}=    Set Variable    ${response.json()}
+
+    ${reservations}=    Set Variable    ${json}[reservations]
+
+    ${reserva_order_0}=    Evaluate    [r for r in ${reservations} if r["order"] == 0][0]
+    Should Be Equal As Strings    ${reserva_order_0}[state]    done
+    ...    msg=❌ La reserva con order 0 debería estar en estado "done" pero está en "${reserva_order_0}[state]}"
+
+    ${reserva_order_1}=    Evaluate    [r for r in ${reservations} if r["order"] == 1][0]
+    Should Be Equal As Strings    ${reserva_order_1}[state]    done
+    ...    msg=❌ La reserva con order 1 debería estar en estado "done" pero está en "${reserva_order_1}[state]}"
+
+    ${reserva_order_2}=    Evaluate    [r for r in ${reservations} if r["order"] == 2][0]
+    Should Be Equal As Strings    ${reserva_order_2}[state]    pending
+    ...    msg=❌ La reserva con order 2 debería estar en estado "pending" pero está en "${reserva_order_2}[state]}"
+
+
 Validate With QR(Nico)
+    Set Log Level    TRACE
+
     Create Session    mysesion    ${STAGE_URL}    verify=true
 
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
@@ -314,25 +424,7 @@ Validate With QR(Nico)
     ${code}=    convert to string    ${response.status_code}
     Status Should Be    200
     Log    ${code}
-    Sleep    10s
-Action On Stop
-    Create Session    mysesion    ${STAGE_URL}    verify=true
 
-    # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
-
-    # Configura las opciones de la solicitud (headers, auth)
-    ${headers}=    Create Dictionary    Authorization=${departureToken}    Content-Type=application/json
-    # Realiza la solicitud GET en la sesión por defecto
-    ${response}=    POST On Session
-    ...    mysesion
-    ...    url=/api/v2/pb/driver/oddepartures/action/${rddId}
-    ...    data={}
-    ...    headers=${headers}
-    # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
-    ${code}=    convert to string    ${response.status_code}
-    Status Should Be    200
-    Log    ${code}
-    Sleep    10s
 
 Stop Departure With Post Leg
     Create Session    mysesion    ${STAGE_URL}    verify=true
@@ -375,6 +467,7 @@ Stop Post Leg Departure
     Log    ${code}
 
 Get Stadistics
+    [Documentation]    The number of reservations with status "done" should be 3, and there should be 2 validations
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     ${url}=    Set Variable
     ...    ${STAGE_URL}/api/v2/pb/driver/departure/end/statistics/${rddId}
@@ -388,3 +481,11 @@ Get Stadistics
     # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
     Should Be Equal As Numbers    ${response.status_code}    200
     Log    ${response.content}
+
+    ${json}=    Set Variable    ${response.json()}
+
+    Should Be Equal As Integers    ${json["reservationsInDone"]}    3
+    ...    msg=Expected 3 reservations in 'done' state, but got ${json["reservationsInDone"]}
+
+    Should Be Equal As Integers    ${json["validations"]}    2
+    ...    msg=Expected 2 validation, but got ${json["validations"]}

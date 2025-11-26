@@ -7,7 +7,7 @@ Library     DateTime
 Library     Collections
 Library     SeleniumLibrary
 Library     RPA.JSON
-Resource    ../../../Variables/variablesTesting.resource
+Resource    ../../../Variables/variablesStage.robot
 
 
 
@@ -62,10 +62,44 @@ Set Date Variables
     ${expiration_date_qr}=    Set Variable    ${fecha_manana}T14:10:37.968Z
     Set Global Variable    ${expiration_date_qr}
 
+Time + 2 Hour
+    ${date}    Get Current Date    time_zone=UTC    exclude_millis=yes
+    ${formatted_date}    Convert Date    ${date}    result_format=%Y-%m-%dT%H:%M:%S.%fZ
+    Log    Hora Actual: ${formatted_date}
+
+    # Sumar una hora
+    ${one_hour_later}    Add Time To Date    ${date}    2 hour
+    ${formatted_one_hour_later}    Convert Date    ${one_hour_later}    result_format=%Y-%m-%dT%H:%M:%S.%fZ
+    Log    Hora Actual + 1 hora: ${formatted_one_hour_later}
+    Set Global Variable    ${formatted_one_hour_later}
+
+Login User With Email(Obtain Token)
+        Create Session    mysesion    ${STAGE_URL}    verify=true
+    # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
+    # Configura las opciones de la solicitud (headers, auth)
+    ${jsonBody}=    Set Variable    {"username":"nicolas+endauto@allrideapp.com","password":"Equilibriozen123#"}
+    ${parsed_json}=    Evaluate    json.loads($jsonBody)    json
+    ${headers}=    Create Dictionary    Authorization=""    Content-Type=application/json
+    # Realiza la solicitud GET en la sesión por defecto
+    ${response}=    Post On Session
+    ...    mysesion
+    ...    url=${loginUserUrl}
+    ...    json=${parsed_json}
+    ...    headers=${headers}
+    # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
+    ${code}=    convert to string    ${response.status_code}
+    Should Be Equal As Numbers    ${code}    200
+    Log    ${code}
+    List Should Contain Value    ${response.json()}    accessToken            No accesToken found in Login!, Failing
+    ${accessToken}=    Set Variable    ${response.json()}[accessToken]
+    ${accessTokenNico}=    Evaluate    "Bearer ${accessToken}"
+    Set Global Variable    ${accessTokenNico}
+
 Verify Open RDD in Community
+    Skip
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     ${url}=    Set Variable
-    ...    ${TESTING_URL}/api/v1/superadmin/communities/${idComunidad}
+    ...    ${STAGE_URL}/api/v1/superadmin/communities/${idComunidad}
 
     # Configura las opciones de la solicitud (headers, auth)
     &{headers}=    Create Dictionary    Authorization=${tokenAdmin}
@@ -82,7 +116,7 @@ Verify Open RDD in Community
 
 Get Places
     ${url}=    Set Variable
-    ...    ${TESTING_URL}/api/v1/admin/places/list?community=${idComunidad}
+    ...    ${STAGE_URL}/api/v1/admin/places/list?community=${idComunidad}
 
     # Configura las opciones de la solicitud (headers, auth)
     &{headers}=    Create Dictionary    Authorization=${tokenAdmin}
@@ -94,12 +128,12 @@ Get Places
     Should Not Be Empty    ${response.json()}
 
 Create RDD As User
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     # Configura las opciones de la solicitud (headers, auth)
-    ${jsonBody}=    Set Variable    {"oddType":"Taxis Coni y Nico","name":"Solicitud y comprobación RDD Abierto RF","direction":"in","comments":"Conducir con precaución","serviceDate":"${today_date}T24:00:00.000Z","startLocation":{"placeId":"655d11d88a5a1a1ff0328466","lat":"-33.3908833","lon":"-70.54620129999999","loc":["-70.54620129999999","-33.3908833"],"address":"Alto Las Condes Avenida Presidente Kennedy Lateral, Las Condes, Chile"},"endLocation":{"lat":"-33.409873","lon":"-70.5673477","loc":["-70.5673477","-33.409873"],"address":"Mall Apumanque Avenida Manquehue Sur, Las Condes, Chile","placeId":"655d11f68a5a1a1ff03284b1"}}
+    ${jsonBody}=    Set Variable    {"oddType":"Taxis Coni y Nico","name":"Solicitud y comprobación RDD Abierto RF","direction":"in","comments":"Conducir con precaución","serviceDate":"${formatted_one_hour_later}","startLocation":{"placeId":"655d11d88a5a1a1ff0328466","lat":"-33.3908833","lon":"-70.54620129999999","loc":["-70.54620129999999","-33.3908833"],"address":"Alto Las Condes Avenida Presidente Kennedy Lateral, Las Condes, Chile"},"endLocation":{"lat":"-33.409873","lon":"-70.5673477","loc":["-70.5673477","-33.409873"],"address":"Mall Apumanque Avenida Manquehue Sur, Las Condes, Chile","placeId":"655d11f68a5a1a1ff03284b1"}}
     ${parsed_json}=    Evaluate    json.loads($jsonBody)    json
-    ${headers}=    Create Dictionary    Authorization=${TokenNico}   Content-Type=application/json
+    ${headers}=    Create Dictionary    Authorization=${accessTokenNico}   Content-Type=application/json
     # Realiza la solicitud GET en la sesión por defecto
     ${response}=    Post On Session
     ...    mysesion
@@ -117,7 +151,7 @@ Create RDD As User
     
 
 Assign Driver
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
     # Configura las opciones de la solicitud (headers, auth)
@@ -133,7 +167,7 @@ Assign Driver
     Should Be Equal As Numbers    ${code}    200
     Log    ${code}
 Assign Vehicle
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
     # Configura las opciones de la solicitud (headers, auth)
@@ -152,7 +186,7 @@ Assign Vehicle
 Get Driver Token
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     ${url}=    Set Variable
-    ...    ${TESTING_URL}/api/v1/admin/pb/drivers/?community=${idComunidad}&driverId=${driverId}
+    ...    ${STAGE_URL}/api/v1/admin/pb/drivers/?community=${idComunidad}&driverId=${driverId}
 
     # Configura las opciones de la solicitud (headers, auth)
     &{headers}=    Create Dictionary    Authorization=${tokenAdmin}
@@ -170,8 +204,32 @@ Get Driver Token
     Log    ${tokenDriver}
     Log    ${response.content}
 
+Start Departure PreLeg
+    Create Session    mysesion    ${STAGE_URL}    verify=true
+
+    # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
+
+    # Configura las opciones de la solicitud (headers, auth)
+    ${headers}=    Create Dictionary    Authorization=${tokenDriver}    Content-Type=application/json
+    # Realiza la solicitud GET en la sesión por defecto
+    ${response}=    POST On Session
+    ...    mysesion
+    ...    url=/api/v2/pb/driver/leg/start
+    ...    data={"departureId":"${rddId}","communityId":"${idComunidad}","startLat":-33.3908833,"startLon":-70.54620129999999,"legType":"pre","customParamsAtStart":[],"preTripChecklist":[],"capacity":5,"busCode":"1111","driverCode":"753","vehicleId":"${vehicleId}","shareToUsers":false,"customParams":[]}
+    ...    headers=${headers}
+    # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
+    ${code}=    convert to string    ${response.status_code}
+    Status Should Be    200
+
+    ${access_token}=    Set Variable    ${response.json()}[token]
+    ${departureToken}=    Evaluate    "Bearer " + "${access_token}"
+    Set Global Variable    ${departureToken}
+
+    Log    ${departureToken}
+    Log    ${code}
+
 Start Departure 
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
 
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
@@ -189,12 +247,14 @@ Start Departure
     Log    ${code}
     ${access_token}=    Set Variable    ${response.json()}[token]
     ${departureToken}=    Evaluate    "Bearer " + "${access_token}"
+    ${departureId}=     Set Variable     ${response.json()}[_id]
     Log    ${departureToken}
     Log    ${code}
      Set Global Variable    ${departureToken}
+    Log     ${departureId}
 
 Get User QR(Nico)
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
 
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
@@ -220,7 +280,7 @@ Get User QR(Nico)
 Get Current Time
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     ${url}=    Set Variable
-    ...    ${TESTING_URL}/api/v2/pb/driver/currentTime
+    ...    ${STAGE_URL}/api/v2/pb/driver/currentTime
 
     # Configura las opciones de la solicitud (headers, auth)
     &{headers}=    Create Dictionary    Authorization=${departureToken}
@@ -233,7 +293,7 @@ Get Current Time
 Get RDD Stops As Driver
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     ${url}=    Set Variable
-    ...    ${TESTING_URL}/api/v2/pb/driver/oddepartures/stops/${rddId}
+    ...    ${STAGE_URL}/api/v2/pb/driver/oddepartures/stops/${rddId}
 
     # Configura las opciones de la solicitud (headers, auth)
     &{headers}=    Create Dictionary    Authorization=${tokenDriver}
@@ -245,7 +305,7 @@ Get RDD Stops As Driver
     Should Be Equal As Numbers    ${response.status_code}    200
 
 Validate With QR(Nico)
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
 
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
@@ -254,7 +314,7 @@ Validate With QR(Nico)
     # Realiza la solicitud GET en la sesión por defecto
     ${response}=    POST On Session
     ...    mysesion
-    ...    url=/api/v2/pb/driver/departures/validate
+    ...    url=/api/v1/pb/provider/departures/validate
     ...    data={"validationString":"${qrCodeNico}"}
     ...    headers=${headers}
     # Verifica el código de estado esperado (puedes ajustarlo según tus expectativas)
@@ -263,7 +323,7 @@ Validate With QR(Nico)
     Log    ${code}
     Sleep    10s
 Action On Stop
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
 
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
@@ -282,7 +342,7 @@ Action On Stop
     Sleep    10s
 
 Stop Departure With Post Leg
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
 
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
@@ -302,7 +362,7 @@ Stop Departure With Post Leg
     Log    ${code}
 
 Stop Post Leg Departure
-    Create Session    mysesion    ${TESTING_URL}    verify=true
+    Create Session    mysesion    ${STAGE_URL}    verify=true
 
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
 
@@ -324,7 +384,7 @@ Stop Post Leg Departure
 Get Stadistics
     # Define la URL del recurso que requiere autenticación (puedes ajustarla según tus necesidades)
     ${url}=    Set Variable
-    ...    ${TESTING_URL}/api/v2/pb/driver/departure/end/statistics/${rddId}
+    ...    ${STAGE_URL}/api/v2/pb/driver/departure/end/statistics/${rddId}
 
     # Configura las opciones de la solicitud (headers, auth)
     &{headers}=    Create Dictionary    Authorization=${tokenDriver}
